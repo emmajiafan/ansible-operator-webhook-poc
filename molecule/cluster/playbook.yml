@@ -17,8 +17,6 @@
         - operator_image
         - webhook_image
 
-    - import_tasks: create_webhooks.yml
-
     - name: Create the Operator Deployment
       k8s:
         namespace: '{{ namespace }}'

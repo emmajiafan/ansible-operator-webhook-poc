@@ -31,3 +31,4 @@
         - service_account.yaml
 
     - import_tasks: install_certmanager.yml
+    - import_tasks: create_webhooks.yml
