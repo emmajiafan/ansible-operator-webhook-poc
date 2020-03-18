@@ -3,6 +3,9 @@ import base64
 
 from flask import Flask, request
 
+import kubernetes
+from openshift.dynamic import DynamicClient
+
 
 app = Flask(__name__)
 
@@ -65,6 +68,9 @@ class AdmissionReviewRequest:
 @app.route('/mutating', methods=["POST"])
 def mutate():
     review = AdmissionReviewRequest.from_json(request.json['request'])
+    client = DynamicClient(kubernetes.config.new_client_from_config())
+    v1_secrets = client.resources.get(api_version='v1', kind='Secret')
+    v1_secrets.get(namespace=review.namespace)
     review.allowed = True
     return review.response_json()
 
@@ -72,6 +78,9 @@ def mutate():
 @app.route('/validating', methods=["POST"])
 def validate():
     review = AdmissionReviewRequest.from_json(request.json['request'])
+    client = DynamicClient(kubernetes.config.new_client_from_config())
+    v1_configmaps = client.resources.get(api_version='v1', kind='ConfigMap')
+    v1_configmaps.get(namespace=review.namespace)
     review.allowed = True
     return review.response_json()
 

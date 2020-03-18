@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
 
-set -x
 
 # This script can be used for manual testing with a kind cluster
 # Run kind create cluster before this script

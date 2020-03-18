@@ -33,3 +33,14 @@
     - name: Example assertion
       assert:
         that: (pods | length) > 0
+
+    - name: Get operator logs
+      command: kubectl logs deploy/validating-operator -c validating-operator
+      register: operator_logs
+
+    - name: Get webhook logs
+      command: kubectl logs deploy/validating-operator -c webhooks
+      register: webhook_logs
+
+    - debug: var=operator_logs.stdout_lines
+    - debug: var=webhook_logs.stdout_lines
