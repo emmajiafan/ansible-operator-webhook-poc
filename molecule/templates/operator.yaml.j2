@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validating-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: validating-operator
+  template:
+    metadata:
+      labels:
+        name: validating-operator
+    spec:
+      serviceAccountName: validating-operator
+      containers:
+        - name: webhooks
+          image: "{{ webhook_image }}"
+          imagePullPolicy: "{{ pull_policy }}"
+          volumeMounts:
+          - mountPath: /app/tls/
+            name: webhook-cert
+        - name: validating-operator
+          # Replace this with the built image name
+          image: "{{ image }}"
+          imagePullPolicy: "{{ pull_policy }}"
+          volumeMounts:
+          - mountPath: /tmp/ansible-operator/runner
+            name: runner
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "validating-operator"
+            - name: ANSIBLE_GATHERING
+              value: explicit
+      volumes:
+        - name: runner
+          emptyDir: {}
+        - name: webhook-cert
+          secret:
+            secretName: webhook-testing-cert
+

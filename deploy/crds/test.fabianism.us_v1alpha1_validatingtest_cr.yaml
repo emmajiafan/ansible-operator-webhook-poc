@@ -1,0 +1,7 @@
+apiVersion: test.fabianism.us/v1alpha1
+kind: ValidatingTest
+metadata:
+  name: example-validatingtest
+spec:
+  # Add fields here
+  size: 3

@@ -1,0 +1,29 @@
+---
+- name: Converge
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - community.kubernetes
+
+  tasks:
+    - name: Ensure {{ item }} is set
+      fail:
+        msg: |
+          You must specify the {{ item | upper }} environment variable in order to run the
+          'cluster' scenario
+      when: not item
+      with_items:
+        - operator_image
+        - webhook_image
+
+    - import_tasks: create_webhooks.yml
+
+    - name: Create the Operator Deployment
+      k8s:
+        namespace: '{{ namespace }}'
+        definition: "{{ lookup('template', '/'.join([template_dir, 'operator.yaml.j2'])) }}"
+        wait: yes
+      vars:
+        image: '{{ operator_image }}'
+        pull_policy: '{{ operator_pull_policy }}'

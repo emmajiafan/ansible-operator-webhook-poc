@@ -1,0 +1,31 @@
+---
+- name: Create cert-manager namespace
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: cert-manager
+        labels:
+          certmanager.k8s.io/disable-validation: "true"
+
+- name: Install cert-manager
+  k8s:
+    definition: '{{ item }}'
+    namespace: cert-manager
+  with_items: '{{ lookup("url", "https://github.com/jetstack/cert-manager/releases/download/v0.10.1/cert-manager.yaml", split_lines=False) | from_yaml_all | list }}'
+  when: item is not none
+
+- name: Create ClusterIssuer
+  k8s:
+    namespace: cert-manager
+    definition:
+      apiVersion: certmanager.k8s.io/v1alpha1
+      kind: ClusterIssuer
+      metadata:
+        name: selfsigning-issuer
+      spec:
+        selfSigned: {}
+  register: result
+  until: result is succeeded
+  retries: 5
