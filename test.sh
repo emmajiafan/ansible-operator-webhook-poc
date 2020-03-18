@@ -16,4 +16,4 @@ docker build -f build/Dockerfile -t docker.io/fabianvf/validating-operator:${VER
 kind load docker-image docker.io/fabianvf/webhooks:${VERSION}
 kind load docker-image docker.io/fabianvf/validating-operator:${VERSION}
 
-molecule converge -s cluster
+molecule ${2:-test} -s cluster
