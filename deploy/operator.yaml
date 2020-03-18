@@ -35,6 +35,15 @@ spec:
               value: "validating-operator"
             - name: ANSIBLE_GATHERING
               value: explicit
+        - name: webhooks
+          image: "REPLACE_WEBHOOK_IMAGE"
+          imagePullPolicy: "Always"
+          volumeMounts:
+          - mountPath: /app/tls/
+            name: webhook-cert
       volumes:
         - name: runner
           emptyDir: {}
+        - name: webhook-cert
+          secret:
+            secretName: webhook-cert
