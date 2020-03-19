@@ -35,12 +35,12 @@
         that: (pods | length) > 0
 
     - name: Get operator logs
-      command: kubectl logs deploy/validating-operator -c validating-operator
+      command: kubectl logs deploy/validating-operator -c validating-operator -n {{ namespace }}
       register: operator_logs
       changed_when: false
 
     - name: Get webhook logs
-      command: kubectl logs deploy/validating-operator -c webhooks
+      command: kubectl logs deploy/validating-operator -c webhooks -n {{ namespace }}
       register: webhook_logs
       changed_when: false
 
