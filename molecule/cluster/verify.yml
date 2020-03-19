@@ -37,10 +37,13 @@
     - name: Get operator logs
       command: kubectl logs deploy/validating-operator -c validating-operator
       register: operator_logs
+      changed_when: false
 
     - name: Get webhook logs
       command: kubectl logs deploy/validating-operator -c webhooks
       register: webhook_logs
+      changed_when: false
+
 
     - debug: var=operator_logs.stdout_lines
     - debug: var=webhook_logs.stdout_lines
